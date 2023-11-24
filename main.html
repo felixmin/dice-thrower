@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>Dice thrower</h1>
+
+<div><input id="troups-a" type="number">Troups Offense</input></div>
+<div><input id="troups-b" type="number">Troups Defense</input></div>
+
+<div><button type="button" onclick="diceRollButton()">Throw dices</button></div>
+<div id="result"></div>
+
+
+
+<script>
+function rollDice(numDice) {
+    let results = [];
+    for (let i = 0; i < numDice; i++) {
+        results.push(Math.floor(Math.random() * 6) + 1);
+    }
+    return results.sort();
+}
+
+function simulateBattle(angreiferTruppen, verteidigerTruppen) {
+    let battleLog = "";
+
+    while (angreiferTruppen > 0 && verteidigerTruppen > 0) {
+        let angreiferWuerfel = Math.min(3, angreiferTruppen);
+        let verteidigerWuerfel = Math.min(2, verteidigerTruppen);
+
+        let angreiferWuerfelErgebnisse = rollDice(angreiferWuerfel);
+        let verteidigerWuerfelErgebnisse = rollDice(verteidigerWuerfel);
+
+        if (angreiferWuerfelErgebnisse[angreiferWuerfel - 1] <= verteidigerWuerfelErgebnisse[verteidigerWuerfel - 1]) {
+            angreiferTruppen -= 1;
+        } else {
+            verteidigerTruppen -= 1;
+        }
+
+        if (verteidigerWuerfel === 2 && angreiferWuerfel >= 2) {
+            if (angreiferWuerfelErgebnisse[angreiferWuerfel - 2] <= verteidigerWuerfelErgebnisse[verteidigerWuerfel - 2]) {
+                angreiferTruppen -= 1;
+            } else {
+                verteidigerTruppen -= 1;
+            }
+        }
+
+        battleLog += "A " + angreiferWuerfelErgebnisse + " Truppen: " + angreiferTruppen + "<br>";
+        battleLog += "V " + verteidigerWuerfelErgebnisse + " Truppen: " + verteidigerTruppen + "<br>";
+    }
+
+    if (verteidigerTruppen === 0) {
+        battleLog += "Angreifer hat mit " + angreiferTruppen + ":" + verteidigerTruppen + " gewonnen";
+    } else {
+        battleLog += "Verteidiger hat mit " + verteidigerTruppen + ":" + angreiferTruppen + " gewonnen";
+    }
+
+    return battleLog;
+}
+function diceRollButton() {
+
+    let troupsB = parseInt(document.getElementById("troups-b").value);
+    let troupsA = parseInt(document.getElementById("troups-a").value);
+    let result = simulateBattle(troupsA, troupsB);
+    document.getElementById("result").innerHTML = "Result: <br>" + result;
+}
+</script>
+</body>
+</html>
